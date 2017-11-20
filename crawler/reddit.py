@@ -1,7 +1,7 @@
 import praw
 from collections import defaultdict
 from configobj import ConfigObj
-
+import json
 def download_comments(username):
     config = ConfigObj('config.ini')
     reddit = praw.Reddit(client_id=config['client_id'],
@@ -15,25 +15,15 @@ def download_comments(username):
 
 def save_file(data, filename):
     with open(filename, mode='w') as f:
-        f.write(str(data))
+        f.write(json.dumps(data))
 
 def download_and_save(username):
     data = download_comments(username)
     save_file(data, './data/' + username + '.data')
 
 def main():
-    top20_redditor = ["StickleyMan", "_vargas_","Unidan", "Iraniangenius", "awildsketchappeared", "Painmatrix", "straydog1980", "RamsesThePigeon", "-eDgaR-", "Jux_", "APOSTOLATE", "kijafa", "Thehealeroftri", "warlizard", "danrennt98", "smeeee", "Donald_Keyman", "dick-nipples", "Poem_for_your_sprog"]
-    random_redditor = ['shadowman3001', 'PrinceCamelton', 'thunderbert80', 'Dacvak',
-                       'Rlight','nix0n','manbra', 'Geekymumma', 'lanismycousin',
-                       'qgyh2', 'maxwellhill', 'BritishEnglishPolice', 'anutensil',
-                       'girafa', 'theBelatedLobster', 'SomeCalcium', 'Vmoney1337',
-                       'iBleeedorange', 'AutoModerator', 'drumcowski', 'ManWithoutModem',
-                       'stopscopiesme', 'IAmAN00bie', 'Dacvak', 'jedberg', 'ketralnis',
-                       'shadydentist', 'qgyh2', 'ketralnis', 'X019', 'rotorcowboy', 'illuminatedwax',
-                       'axolotl_peyotl', 'User_Name13', 'Ambiguously_Ironic', 'DaedalusMinion',
-                       'pithyretort', 'boib', 'brigodon', 'themightiestduck', 'IAmTheRedWizards',
-                       'Abe_lincolin', 'zomboi', 'CycleModRecs']
-    for user in random_redditor:
+    sample_reddit_users = ['brigodon', 'rotorcowboy', 'Abe_lincolin', 'Thehealeroftri', 'User_Name13', 'maxwellhill', 'illuminatedwax', 'axolotl_peyotl', 'Rlight', 'straydog1980', 'themightiestduck', 'qgyh2', 'BritishEnglishPolice', 'IAmAN00bie', 'manbra', 'MaiaNyx', 'nix0n', 'Jux_', 'awildsketchappeared', 'iBleeedorange', 'CycleModRecs', 'vrckid', 'ManWithoutModem', 'danrennt98', 'AutoModerator', 'Donald_Keyman', 'shadowman3001', 'lanismycousin', 'Geekymumma', 'MrWeiner', 'Vmoney1337', 'theBelatedLobster', 'RamsesThePigeon', 'way_fairer', 'Ambiguously_Ironic', 'PrinceCamelton', 'kijafa', 'StickleyMan', 'JavaReallySucks', 'Elaus', 'thunderbert80', 'boib', 'APOSTOLATE', 'IAmTheRedWizards', 'SomeCalcium', 'warlizard', 'anutensil', 'zomboi', 'dick-nipples', '-eDgaR-', 'smeeee', 'Painmatrix', 'GoldCountach', 'Poem_for_your_sprog', 'ketralnis', 'drumcowski', 'Dacvak', 'X019', 'shadydentist', 'Slouching2Bethlehem', 'jedberg', 'Iraniangenius', 'pithyretort', 'DaedalusMinion', 'stopscopiesme', 'girafa', '_vargas_']
+    for user in sample_reddit_users:
         try:
             download_and_save(user)
         except Exception as e:
