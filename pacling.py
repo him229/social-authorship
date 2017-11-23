@@ -101,5 +101,7 @@ classifications = [predict_authors(fvs).labels_ for fvs in feature_sets]
 results = classifications[0]
 res_list = []
 for _ in range(10):
+    if results[0] == 0:
+        results = 1 - results
     res_list.append((sum(results[:len(sahil)])/float(len(sahil))))
 print "Accuracy = " + str(np.median(res_list))
