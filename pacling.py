@@ -71,7 +71,6 @@ def lexical_stuff(comments):
         # apply whitening to decorrelate the features
         fvs_lexical = whiten(fvs_lexical)
         fvs_punct = whiten(fvs_punct)
-
         return np.nan_to_num(fvs_lexical), np.nan_to_num(fvs_punct)
 
         # # average number of words per sentence
@@ -88,7 +87,19 @@ def predict_authors(fvs):
     km.fit(fvs)
     return km
 
-with open('./data/vrckid.data', 'r') as f, open('./data/dick-nipples.data', 'r') as f2:
+def predict_comment(kmeans_cluster, comment):
+    tokens = nltk.word_tokenize(comment.lower())
+    words = word_tokenizer.tokenize(comment.lower())
+    sentences = sentence_tokenizer.tokenize(comment)
+    vocab = set(words)
+    words_per_sentence = np.array([len(word_tokenizer.tokenize(s)) for s in sentences])
+    fvs_lexical = np.zeros((1, 3), np.float64)
+    fvs_lexical[0][0] = words_per_sentence.mean()
+    fvs_lexical[0][1] = words_per_sentence.std()
+    fvs_lexical[0][2] = len(vocab) / float(len(words)) if words else 0
+    return kmeans_cluster.predict(fvs_lexical)[0]
+
+with open('./data/vrckid.data', 'r') as f, open('./data/straydog1980.data', 'r') as f2:
     sahil = f.read()
     elaus = f2.read()
     sahil = json.loads(sahil)
@@ -96,12 +107,14 @@ with open('./data/vrckid.data', 'r') as f, open('./data/dick-nipples.data', 'r')
     comments = sahil + elaus
     
 feature_sets = list(lexical_stuff(comments))
+kmeans_cluster = predict_authors(feature_sets[0])
 
-classifications = [predict_authors(fvs).labels_ for fvs in feature_sets]
-results = classifications[0]
+# classifications = [kmeans_cluster.labels_ for fvs in feature_sets]
+results = kmeans_cluster.labels_
 res_list = []
 for _ in range(10):
     if results[0] == 0:
         results = 1 - results
     res_list.append((sum(results[:len(sahil)])/float(len(sahil))))
 print "Accuracy = " + str(np.median(res_list))
+
